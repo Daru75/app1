@@ -1,0 +1,30 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+from time import sleep
+from dhtxx import DHT11, DHT22
+from firebase import firebase
+
+# conexión al firebase, (acá colocas tu la URL que te genera firebase)
+fire = firebase.FirebaseApplication('https://app1-ac7da.firebaseio.com', None) 
+
+# Adjust pin (BCM) for your needs !
+dht11 = DHT11(14)
+try:
+	while True:
+	 # Retries 'max_tries' from DHT11 to get a valid result
+	 humedad, temperatura = dht11.get_result(max_tries=10)  # 'max_tries' defaults to 5
+	 if humedad is not None and temperatura is not None:
+	  print "************************************"
+	  print('Temp: {0:0.1f} C Humidity; {1:0.1f} %'.format(temp[0], humd[1]))
+	  print "************************************\n"
+	  #Actualizamos el valor de los sensores en firebase, para cada caso
+		fire.put('/sensor/', 'temp', temp)
+		fire.put('/sensor/', 'hume', humd)
+	 else:
+	  print('Failed to get result !')
+
+	 sleep(1)
+
+except KeyboardInterrupt:
+      print "\nSalida"
+      break
